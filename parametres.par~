@@ -1,0 +1,193 @@
+#-----------------------------------------------------------------------#
+#    Parametres de l'observation 					#
+#-----------------------------------------------------------------------#
+pointage: [0.0,0.0]'
+#source: [alpha,delta]' (luminosite)% {indice spectral}
+#source: [-1.2,-4.8]'    (1.0)%        {2.0}
+#source: [4.2,-5.4]'     (1.0)%        {2.0}
+#source: [0.9,0.3]'      (1.0)%        {2.0}
+source: [0.0,0.0]'      (1.0)%        {2.0}
+#source: [-0.9,-0.3]'    (1.0)%        {2.0}
+#source: [1.2,6.0]'      (1.0)%        {2.0}
+#source: [-4.2,4.8]'     (1.0)%        {2.0}
+#source: [0.0,1.8]'      (1.0)%        {2.0}
+#source: [0.0,-6.0]'     (1.0)%        {1.1}
+
+pointage: [16746.052,-1434.203]'                
+source: [16746.201,-1434.630]' (0.043002)% {1.1}
+source: [16737.668,-1426.956]' (0.139451)% {1.1}
+source: [16746.237,-1435.275]' (0.027615)% {1.1}
+source: [16735.833,-1428.380]' (0.016056)% {1.1}
+source: [16752.546,-1421.676]' (0.083052)% {1.1}
+source: [16746.944,-1425.170]' (0.019551)% {1.1}
+source: [16739.770,-1435.073]' (0.008020)% {1.1}
+source: [16731.038,-1435.793]' (0.069952)% {1.1}
+source: [16754.870,-1440.477]' (0.009863)% {1.1}
+source: [16740.702,-1435.458]' (0.009325)% {1.1}
+source: [16744.577,-1440.931]' (0.009309)% {1.1}
+source: [16751.366,-1432.009]' (0.009465)% {1.1}
+source: [16742.631,-1426.502]' (0.003685)% {1.1}
+source: [16743.885,-1431.011]' (0.008136)% {1.1}
+source: [16750.100,-1420.818]' (0.009661)% {1.1}
+source: [16745.444,-1433.627]' (0.004861)% {1.1}
+source: [16743.544,-1421.808]' (0.015347)% {1.1}
+source: [16739.137,-1429.469]' (0.006393)% {1.1}
+source: [16744.612,-1432.319]' (0.006676)% {1.1}
+source: [16755.179,-1438.488]' (0.006745)% {1.1}
+source: [16746.834,-1446.665]' (0.012308)% {1.1}
+source: [16740.156,-1444.588]' (0.003338)% {1.1}
+source: [16749.812,-1433.801]' (0.003917)% {1.1}
+source: [16735.581,-1436.637]' (0.014788)% {1.1}
+source: [16752.178,-1428.205]' (0.005805)% {1.1}
+source: [16749.642,-1434.814]' (0.004552)% {1.1}
+source: [16744.183,-1421.613]' (0.015746)% {1.1}
+source: [16748.657,-1429.499]' (0.007317)% {1.1}
+source: [16743.813,-1426.276]' (0.003170)% {1.1}
+source: [16735.671,-1437.329]' (0.007291)% {1.1}
+source: [16745.963,-1442.429]' (0.005864)% {1.1}
+source: [16760.579,-1434.759]' (0.008136)% {1.1}
+source: [16738.931,-1437.361]' (0.005781)% {1.1}
+source: [16741.418,-1430.848]' (0.006393)% {1.1}
+source: [16737.223,-1427.981]' (0.048687)% {1.1}
+source: [16747.109,-1436.435]' (0.004129)% {1.1}
+source: [16738.674,-1426.465]' (0.042096)% {1.1}
+source: [16739.808,-1421.728]' (0.015960)% {1.1}
+source: [16746.747,-1434.486]' (0.002034)% {1.1}
+source: [16731.328,-1434.936]' (0.006828)% {1.1}
+source: [16750.037,-1430.924]' (0.002528)% {1.1}
+source: [16740.331,-1437.925]' (0.005277)% {1.1}
+source: [16748.439,-1446.416]' (0.029706)% {1.1}
+source: [16750.767,-1436.988]' (0.003719)% {1.1}
+source: [16732.451,-1438.754]' (0.008673)% {1.1}
+source: [16732.677,-1434.892]' (0.013860)% {1.1}
+source: [16753.539,-1432.694]' (0.002958)% {1.1}
+source: [16742.075,-1439.251]' (0.002481)% {1.1}
+source: [16744.692,-1437.326]' (0.001469)% {1.1}
+source: [16743.681,-1435.702]' (0.003402)% {1.1}
+source: [16740.655,-1433.471]' (0.001924)% {1.1}
+source: [16737.608,-1430.222]' (0.003625)% {1.1}
+source: [16737.801,-1440.303]' (0.008432)% {1.1}
+source: [16744.455,-1445.786]' (0.002345)% {1.1}
+source: [16734.862,-1436.925]' (0.002799)% {1.1}
+source: [16739.313,-1439.354]' (0.002719)% {1.1}
+source: [16754.010,-1428.747]' (0.007005)% {1.1}
+source: [16747.582,-1430.017]' (0.001009)% {1.1}
+source: [16745.225,-1429.350]' (0.002370)% {1.1}
+source: [16758.575,-1422.367]' (0.002535)% {1.1}
+source: [16743.360,-1428.673]' (0.005082)% {1.1}
+source: [16732.376,-1434.520]' (0.019383)% {1.1}
+source: [16753.948,-1421.767]' (0.007616)% {1.1}
+source: [16739.433,-1428.789]' (0.002289)% {1.1}
+source: [16761.213,-1438.359]' (0.014743)% {1.1}
+source: [16746.068,-1437.233]' (0.001690)% {1.1}
+source: [16762.181,-1426.484]' (0.011087)% {1.1}
+source: [16753.358,-1429.880]' (0.003032)% {1.1}
+source: [16742.825,-1427.208]' (0.001107)% {1.1}
+source: [16738.273,-1437.027]' (0.001732)% {1.1}
+source: [16747.430,-1420.381]' (0.015992)% {1.1}
+source: [16745.070,-1420.870]' (0.003675)% {1.1}
+source: [16736.408,-1434.092]' (0.002390)% {1.1}
+source: [16747.053,-1435.550]' (0.001064)% {1.1}
+source: [16757.193,-1430.458]' (0.003624)% {1.1}
+source: [16745.405,-1446.085]' (0.002892)% {1.1}
+source: [16744.312,-1445.291]' (0.003578)% {1.1}
+source: [16752.912,-1440.211]' (0.001752)% {1.1}
+source: [16739.949,-1425.403]' (0.018497)% {1.1}
+source: [16752.319,-1445.362]' (0.004343)% {1.1}
+source: [16754.607,-1424.906]' (0.005231)% {1.1}
+source: [16755.226,-1436.231]' (0.001671)% {1.1}
+source: [16754.309,-1428.212]' (0.001535)% {1.1}
+source: [16751.434,-1438.607]' (0.001464)% {1.1}
+source: [16752.519,-1423.377]' (0.005240)% {1.1}
+source: [16752.915,-1425.030]' (0.002627)% {1.1}
+source: [16737.660,-1441.818]' (0.001489)% {1.1}
+source: [16759.443,-1427.955]' (0.005101)% {1.1}
+source: [16747.640,-1424.456]' (0.001677)% {1.1}
+source: [16748.523,-1444.613]' (0.003259)% {1.1}
+source: [16759.719,-1440.029]' (0.002969)% {1.1}
+source: [16754.002,-1435.261]' (0.001288)% {1.1}
+source: [16754.108,-1427.496]' (0.001743)% {1.1}
+
+nombre de photons: [10000000]
+#bande en energie: [min=0.1,max=100]kev
+bande en energie:  [0.5,100]kev
+#si mono-energie alors valeur de cette energie:
+energie fixe: [1]kev
+
+graine: [1]
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite Miroir 				        #
+#-----------------------------------------------------------------------#
+nombres de miroirs: [100]
+#focale: [7.5]m
+rayon du miroir si un seul miroir: [0.1]m
+focale: [20.0]m
+position du module miroir: [0.0,0.0,-0.2]m
+erreur d'alignement des miroirs: [15.0]"
+erreur de positionnement des miroirs: [0.00015,0.00015,0.0005]m
+erreur de forme des miroirs: [3.85]"
+#erreur de forme des miroirs: [0.1]"
+polissage des miroirs: [0.25]"
+position de la cible 1: [0.0,-0.574,-0.3]m
+position de la cible 2: [0.497,-0.287,-0.3]m
+position de la cible 3: [-0.497,-0.287,-0.3]m
+#biais de la mesure du STR du MSC: [0.0,0.0,0.0]"
+biais de la mesure du STR du MSC: [3.2,3.3,5.0]"
+#bruit pixel de la mesure du STR du MSC: [0.0]"
+bruit pixel de la mesure du STR du MSC: [2.0]"
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite Detecteur 				        #
+#-----------------------------------------------------------------------#
+hauteur du collimateur: [0.1]m
+rayon du collimateur: [10]m
+#position du LED: [0.0,0.0,0.0]m
+position du LED: [0.0,0.0,0.196]m
+position du HED: [0.0,0.0,0.186]m
+#position du CLM du DSC: [0.5,0.0,0.0]m
+position du CLM du DSC: [0.5,0.0,0.196]m
+#biais de la mesure du STR du DSC: [0.0,0.0,0.0]"
+biais de la mesure du STR du DSC: [3.2,3.3,5.0]"
+#bruit pixel de la mesure du STR du DSC: [0.0]"
+bruit pixel de la mesure du STR du DSC: [2.0]"
+#biais de la mesure du CLM du DSC: [0.0,0.0,0.0]"
+biais de la mesure du CLM du DSC: [0.2,0.2,0.2]"
+bruit pixel de la mesure du CLM du DSC: [1.0]"
+#bruit pixel de la mesure du CLM du DSC: [0.4]"
+dimensions du LED: [0.08,0.08]m
+dimensions du HED: [0.084375,0.084375]m
+nombre de pixels du LED: [128,128]
+nombre de pixels du HED: [135,135]
+taille des pixels du LED: [0.000625]m
+taille des pixels du HED: [0.000625]m
+
+#-----------------------------------------------------------------------#
+#    Parametres du vol en formation				        #
+#-----------------------------------------------------------------------#
+nombre d'etats de la formation: [10000]
+#nombre d'etats de la formation: [86165]
+defocalisation: [0.0]m
+
+#-----------------------------------------------------------------------#
+#    Fichiers Entrees						        #
+#-----------------------------------------------------------------------#
+fichier parametre face d'entree des miroirs: [./input/mirrors_entree.par]
+fichier parametre des miroirs paraboliques: [./input/mirrors_para.par]
+fichier parametre des miroirs hyperboliques: [./input/mirrors_hyper.par]
+fichier parametre des coefficients de reflexion: [./input/coeff_reflection_250g.par]
+fichier donnees des mouvements du MSC: [./input/mouvement_MSC.data]
+fichier donnees des mouvements du DSC: [./input/mouvement_DSC_astrium.data]
+
+#-----------------------------------------------------------------------#
+#    Fichiers Sorties						        #
+#-----------------------------------------------------------------------#
+fichier parametre PSF: [./output/PSF.data]
+fichier donnees PSF reelle: [./output/PSF_reelle.data]
+fichier donnees PSF corrigee: [./output/PSF_corrige.data]
+fichier donnees spectre LED total: [./output/spec_LED_total.data]
+fichier donnees spectre HED total: [./output/spec_HED_total.data]
+fichier donnees image et spectre LED: [./output/spec_LED_pixels.data]
+fichier donnees image et spectre HED: [./output/spec_HED_pixels.data]
+fichier donnees image corrigee et spectre LED: [./output/spec_LED_pixels_corr.data]
+fichier donnees image corrigee et spectre HED: [./output/spec_HED_pixels_corr.data]

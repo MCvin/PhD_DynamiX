@@ -1,0 +1,99 @@
+#-----------------------------------------------------------------------#
+#    Parametres de l'observation 					#
+#-----------------------------------------------------------------------#
+pointage: [0.0,0.0]'
+#source: [alpha,delta]' (luminosite)% {indice spectral}
+#source: [-1.2,-4.8]'    (1.0)%        {2.0}
+#source: [4.2,-5.4]'     (1.0)%        {2.0}
+#source: [0.9,0.3]'      (1.0)%        {2.0}
+source: [0.0,0.0]'      (1.0)%        {1.1}
+#source: [-0.9,-0.3]'    (1.0)%        {2.0}
+#source: [1.2,6.0]'      (1.0)%        {2.0}
+#source: [-4.2,4.8]'     (1.0)%        {2.0}
+#source: [0.0,1.8]'      (1.0)%        {2.0}
+#source: [0.0,-6.0]'     (1.0)%        {1.1}
+
+
+
+nombre de photons: [1000000]
+#bande en energie: [min=0.1,max=100]kev
+bande en energie:  [0.5,100]kev
+#si mono-energie alors valeur de cette energie:
+energie fixe: [1]kev
+
+graine: [1]
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite Miroir 				        #
+#-----------------------------------------------------------------------#
+nombres de miroirs: [100]
+#focale: [7.5]m
+rayon du miroir si un seul miroir: [0.1]m
+focale: [20.0]m
+position du module miroir: [0.0,0.0,-0.2]m
+erreur d'alignement des miroirs: [15.0]"
+erreur de positionnement des miroirs: [0.00015,0.00015,0.0005]m
+erreur de forme des miroirs: [3.85]"
+polissage des miroirs: [0.25]"
+position de la cible 1: [0.0,-0.574,-0.3]m
+position de la cible 2: [0.497,-0.287,-0.3]m
+position de la cible 3: [-0.497,-0.287,-0.3]m
+biais de la mesure du STR du MSC: [0.0,0.0,0.0]"
+#biais de la mesure du STR du MSC: [3.2,3.3,5.0]"
+bruit pixel de la mesure du STR du MSC: [0.0]"
+#bruit pixel de la mesure du STR du MSC: [2.0]"
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite Detecteur 				        #
+#-----------------------------------------------------------------------#
+hauteur du collimateur: [0.1]m
+rayon du collimateur: [10]m
+#position du LED: [0.0,0.0,0.0]m
+position du LED: [0.0,0.0,0.196]m
+position du HED: [0.0,0.0,0.186]m
+#position du CLM du DSC: [0.5,0.0,0.0]m
+position du CLM du DSC: [0.5,0.0,0.196]m
+biais de la mesure du STR du DSC: [0.0,0.0,0.0]"
+#biais de la mesure du STR du DSC: [3.2,3.3,5.0]"
+bruit pixel de la mesure du STR du DSC: [0.0]"
+#bruit pixel de la mesure du STR du DSC: [2.0]"
+biais de la mesure du CLM du DSC: [0.0,0.0,0.0]"
+#biais de la mesure du CLM du DSC: [0.2,0.2,0.2]"
+bruit pixel de la mesure du CLM du DSC: [1.0]"
+#bruit pixel de la mesure du CLM du DSC: [0.4]"
+dimensions du LED: [0.08,0.08]m
+dimensions du HED: [0.084375,0.084375]m
+nombre de pixels du LED: [128,128]
+nombre de pixels du HED: [135,135]
+taille des pixels du LED: [0.000625]m
+taille des pixels du HED: [0.000625]m
+
+#-----------------------------------------------------------------------#
+#    Parametres du vol en formation				        #
+#-----------------------------------------------------------------------#
+nombre d'etats de la formation: [10000]
+#nombre d'etats de la formation: [86165]
+defocalisation: [0.0]m
+
+#-----------------------------------------------------------------------#
+#    Fichiers Entrees						        #
+#-----------------------------------------------------------------------#
+fichier parametre face d'entree des miroirs: [./input/mirrors_entree.par]
+fichier parametre des miroirs paraboliques: [./input/mirrors_para.par]
+fichier parametre des miroirs hyperboliques: [./input/mirrors_hyper.par]
+fichier parametre des coefficients de reflexion: [./input/coeff_reflection_250g.par]
+fichier donnees des mouvements du MSC: [./input/mouvement_MSC.data]
+fichier donnees des mouvements du DSC: [./input/mouvement_DSC_astrium.data]
+
+#-----------------------------------------------------------------------#
+#    Fichiers Sorties						        #
+#-----------------------------------------------------------------------#
+fichier parametre PSF: [./output/PSF.data]
+fichier donnees PSF reelle: [./output/PSF_reelle.data]
+fichier donnees PSF corrigee: [./output/PSF_corrige.data]
+fichier donnees spectre LED total: [./output/spec_LED_total.data]
+fichier donnees spectre HED total: [./output/spec_HED_total.data]
+fichier donnees image et spectre LED: [./output/spec_LED_pixels.data]
+fichier donnees image et spectre HED: [./output/spec_HED_pixels.data]
+fichier donnees image corrigee et spectre LED: [./output/spec_LED_pixels_corr.data]
+fichier donnees image corrigee et spectre HED: [./output/spec_HED_pixels_corr.data]

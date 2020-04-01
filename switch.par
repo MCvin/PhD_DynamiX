@@ -1,0 +1,38 @@
+#-----------------------------------------------------------------------#
+#    		Configuration de la simulation			        #
+#-----------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------#
+#    Parametres de l'observation				        #
+#-----------------------------------------------------------------------#
+sauvegarde des donnees: [NO]
+luminosite propre a chaque source: [YES]
+mono-energie des photons: [YE]
+distribution uniforme de l'energie photonique: [YE]
+distribution en powerlaw de l'energie photonique: [YES]
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite miroir					#
+#-----------------------------------------------------------------------#
+derive de l'attitude du MSC selon x: [YES]
+derive de l'attitude du MSC selon y: [YES]
+derive de l'attitude du MSC selon z: [YES]
+defauts d'assemblage des miroirs: [YES]
+defauts de forme des miroirs: [YES]
+defauts de surface des miroirs: [YES]
+defauts STR du MSC: [YES]
+reflection totale: [YE]
+
+#-----------------------------------------------------------------------#
+#    Parametres du satellite detecteur				        #
+#-----------------------------------------------------------------------#
+derive de la position du DSC selon x: [YES]
+derive de la position du DSC selon y: [YES]
+derive de la position du DSC selon z: [YES]
+derive de l'attitude du DSC selon x: [YES]
+derive de l'attitude du DSC selon y: [YES]
+derive de l'attitude du DSC selon z: [YES]
+defauts STR du DSC: [YES]
+defauts CLM du DSC: [YES]
+Low Energie Detector: [YES]
+High Energie Detector: [YES]

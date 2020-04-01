@@ -1,0 +1,374 @@
+module SENSEURS
+
+use OUTILS
+use LECTURE
+
+implicit none
+
+
+contains
+
+
+!------------------------------------------------------------------------
+!-          Exprime la positon des senseurs et capteurs                 -
+!-         dans leur repere de reference (RefPM et RefPD)               -
+!------------------------------------------------------------------------
+subroutine pos_senseurs(Para_SM,Para_SD,etat, pos_cibles_PM,pos_sens_PD)
+
+implicit none
+
+! IN/OUT variables
+        type (ParametresSatMiroir) :: Para_SM
+        type (ParametresSatDetecteur) :: Para_SD
+        integer :: etat
+
+        real (kind=wp), dimension(3,3) :: pos_cibles_PM  !position des cibles optique sur le sat miroir
+        real (kind=wp), dimension(3) :: pos_sens_PD      !position du senseur optique sur le sat detecteur
+
+! Local variables
+        real (kind=wp), dimension(3) :: deriveSM, deriveSD
+
+
+! geometrie du satellite miroir
+
+        !derive en attitude dans le referentiel de pointage
+        deriveSM=Para_SM%mouvement(etat)%attitude
+
+        !cible
+            !position des cibles dans RefSM
+            pos_cibles_PM=Para_SM%pos_cibles
+
+            !position de la cible 1 dans RefPM pour pouvoir interpreter correctement les donnees senseurs
+            call rotationZ(pos_cibles_PM(1,:),deriveSM(3))
+            call rotationY(pos_cibles_PM(1,:),deriveSM(2))
+            call rotationX(pos_cibles_PM(1,:),deriveSM(1))
+
+            !position de la cible 2 dans RefPM pour pouvoir interpreter correctement les donnees senseurs
+            call rotationZ(pos_cibles_PM(2,:),deriveSM(3))
+            call rotationY(pos_cibles_PM(2,:),deriveSM(2))
+            call rotationX(pos_cibles_PM(2,:),deriveSM(1))
+
+            !position de la cible 3 dans RefPM pour pouvoir interpreter correctement les donnees senseurs
+            call rotationZ(pos_cibles_PM(3,:),deriveSM(3))
+            call rotationY(pos_cibles_PM(3,:),deriveSM(2))
+            call rotationX(pos_cibles_PM(3,:),deriveSM(1))
+
+! geometrie du satellite detecteur
+
+        !derive en attitude par rapport au referentiel de pointage
+        deriveSD=Para_SD%mouvement(etat)%attitude
+
+        !senseur optique
+            !position du senseur optique dans RefSD (en realite il y en a 2)
+            pos_sens_PD=Para_SD%pos_sens
+
+            !position des senseurs dans RefPD pour pouvoir interpreter correctement les donnees senseurs
+            call rotationZ(pos_sens_PD,deriveSD(3))
+            call rotationY(pos_sens_PD,deriveSD(2))
+            call rotationX(pos_sens_PD,deriveSD(1))
+
+end subroutine pos_senseurs
+
+
+!------------------------------------------------------------------------
+!-              Simulation des donnees senseurs                         -
+!-                (Star-Tracker's, optique)                             -
+!------------------------------------------------------------------------
+subroutine donnees_senseurs(Para_SM,Para_SD,etat,pos_cibles_PM,pos_sens_PD, mes_Att_SM,mes_Att_SD,mes_Pos_SM)
+
+implicit none
+
+! IN/OUT variables
+        type (ParametresSatMiroir) :: Para_SM
+        type (ParametresSatDetecteur) :: Para_SD
+        integer :: etat
+        real (kind=wp), dimension(3,3) :: pos_cibles_PM  !position des cibles optique sur le sat miroir
+        real (kind=wp), dimension(3) :: pos_sens_PD      !position du senseur optique sur le sat detecteur
+
+        real (kind=wp), dimension(3) :: mes_Att_SM
+        real (kind=wp), dimension(3) :: mes_Att_SD
+        real (kind=wp), dimension(3,2) :: mes_Pos_SM
+
+! local variables
+        real (kind=wp), dimension(3) :: err_sens_att_SM, err_sens_att_SD
+        real (kind=wp), dimension(3,3) :: err_sens_pos_SD    !3 vecteurs, 1 par cible car chaque cible a un bruit pixel propre
+        real (kind=wp), dimension(3) :: deriveSM, deriveSD
+        real (kind=wp), dimension(3) :: vecteurCLM_TRG_1, vecteurCLM_TRG_2, vecteurCLM_TRG_3
+        real (kind=wp) :: G05DDF
+        real (kind=wp), dimension(3,3) :: rotation_CLM
+
+
+! Derive reelle de l'attitude des satellites
+        deriveSM=Para_SM%mouvement(etat)%attitude
+        deriveSD=Para_SD%mouvement(etat)%attitude
+
+! Generation d'incertitudes sur les senseurs liees a leur pixelisation
+        err_sens_att_SM(1)=G05DDF(0._wp,Para_SM%noise_sens_att)
+        err_sens_att_SM(2)=G05DDF(0._wp,Para_SM%noise_sens_att)
+        err_sens_att_SM(3)=G05DDF(0._wp,Para_SM%noise_sens_att)
+
+        err_sens_att_SD(1)=G05DDF(0._wp,Para_SD%noise_sens_att)
+        err_sens_att_SD(2)=G05DDF(0._wp,Para_SD%noise_sens_att)
+        err_sens_att_SD(3)=G05DDF(0._wp,Para_SD%noise_sens_att)
+
+        err_sens_pos_SD(1,1)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(1,2)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(1,3)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(2,1)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(2,2)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(2,3)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(3,1)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(3,2)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+        err_sens_pos_SD(3,3)=G05DDF(0._wp,Para_SD%noise_sens_pos)
+
+! Senseurs de l'attitude (STR)
+        ! du satellite miroir
+        mes_Att_SM=deriveSM
+        ! mesure a laquelle il faut rajouter plusieurs composantes de bruit
+        if (Para_SM%STR) then
+            ! un biais (erreur systematique de la mesure commune au pointage)
+            mes_Att_SM=mes_Att_SM + Para_SM%biais_sens_att
+            ! un bruit pixel (variant avec l'attitude)
+            mes_Att_SM=mes_Att_SM + err_sens_att_SM
+        end if
+
+        ! du satellite detecteur
+        mes_Att_SD=deriveSD
+        ! mesure a laquelle il faut rajouter plusieurs composantes de bruit
+        if (Para_SD%STR) then
+            ! un biais (erreur systematique de la mesure commune au pointage)
+            mes_Att_SD=mes_Att_SD + Para_SD%biais_sens_att
+            ! un bruit pixel (variant avec l'attitude)
+            mes_Att_SD=mes_Att_SD + err_sens_att_SD
+        end if
+
+! Senseur de la position relative du satellite detecteur (CLM)
+
+!!$write(21,*) Para_SD%mouvement(etat)%position-Para_SD%pointage%position
+        ! vecteur reel qui va du CLM a la cible numero 1
+        vecteurCLM_TRG_1=(Para_SM%mouvement(etat)%position-Para_SD%mouvement(etat)%position)
+        vecteurCLM_TRG_1=vecteurCLM_TRG_1 + (pos_cibles_PM(1,:)-pos_sens_PD)
+        !print*,"vecteur position originale vrai",vecteurCLM_TRG_1
+
+        ! vecteur reel qui va du CLM a la cible numero 2
+        vecteurCLM_TRG_2=(Para_SM%mouvement(etat)%position-Para_SD%mouvement(etat)%position)
+        vecteurCLM_TRG_2=vecteurCLM_TRG_2 + (pos_cibles_PM(2,:)-pos_sens_PD)
+
+        ! vecteur reel qui va du CLM a la cible numero 3
+        vecteurCLM_TRG_3=(Para_SM%mouvement(etat)%position-Para_SD%mouvement(etat)%position)
+        vecteurCLM_TRG_3=vecteurCLM_TRG_3 + (pos_cibles_PM(3,:)-pos_sens_PD)
+
+        ! mesure a laquelle il faut rajouter plusieurs composantes de bruit
+        if (Para_SD%CLM) then
+            ! le CLM fonctionne comme un STR, son erreur est angulaire donc cela revient a rajouter une erreur sur deriveSD
+            ! un biais (erreur systematique de la mesure)
+            rotation_CLM(1,:)=deriveSD + Para_SD%biais_sens_pos
+            rotation_CLM(2,:)=deriveSD + Para_SD%biais_sens_pos
+            rotation_CLM(3,:)=deriveSD + Para_SD%biais_sens_pos
+            ! un bruit pixel (variant avec l'attitude) propre a chacune des 3 cibles
+            rotation_CLM=rotation_CLM + err_sens_pos_SD
+        end if
+
+        !Puis on se place dans le repere du senseur CLM: position vectorielle de la cible vue par le senseur dans son repere propre
+        !position vectorielle de la cible 1
+        call rotationZ(vecteurCLM_TRG_1,-rotation_CLM(1,3))
+        call rotationY(vecteurCLM_TRG_1,-rotation_CLM(1,2))
+        call rotationX(vecteurCLM_TRG_1,-rotation_CLM(1,1))
+        !print*,"vecteur position original dans le repere du CLM",vecteurCLM_TRG_1
+!!$write(22,*) vecteurCLM_TRG_1
+        !position vectorielle de la cible 2
+        call rotationZ(vecteurCLM_TRG_2,-rotation_CLM(2,3))
+        call rotationY(vecteurCLM_TRG_2,-rotation_CLM(2,2))
+        call rotationX(vecteurCLM_TRG_2,-rotation_CLM(2,1))
+        !position vectorielle de la cible 3
+        call rotationZ(vecteurCLM_TRG_3,-rotation_CLM(3,3))
+        call rotationY(vecteurCLM_TRG_3,-rotation_CLM(3,2))
+        call rotationX(vecteurCLM_TRG_3,-rotation_CLM(3,1))
+
+        !Mais le CLM fonctionne comme un STR, il fournit un alpha et un delta
+        !position angulaire de la cible 1
+        mes_Pos_SM(1,1)=ATAND(vecteurCLM_TRG_1(2)/vecteurCLM_TRG_1(3))
+        mes_Pos_SM(1,2)=ATAND(vecteurCLM_TRG_1(1)/vecteurCLM_TRG_1(3))
+        !print*,"position angulaire originale",mes_Pos_SM(1,:)
+!!$write(23,*) mes_Pos_SM(1,:)
+        !position angulaire de la cible 2
+        mes_Pos_SM(2,1)=ATAND(vecteurCLM_TRG_2(2)/vecteurCLM_TRG_2(3))
+        mes_Pos_SM(2,2)=ATAND(vecteurCLM_TRG_2(1)/vecteurCLM_TRG_2(3))
+        !position angulaire de la cible 3
+        mes_Pos_SM(3,1)=ATAND(vecteurCLM_TRG_3(2)/vecteurCLM_TRG_3(3))
+        mes_Pos_SM(3,2)=ATAND(vecteurCLM_TRG_3(1)/vecteurCLM_TRG_3(3))
+
+end subroutine donnees_senseurs
+
+
+!------------------------------------------------------------------------
+!-             Interpretation des donnees senseurs                      -
+!------------------------------------------------------------------------
+subroutine traitement_donnees(Para_SM,Para_SD,mes_Att_SM,mes_Att_SD,mes_Pos_SM)
+
+implicit none
+
+! IN/OUT variables
+        type (ParametresSatMiroir) :: Para_SM
+        type (ParametresSatDetecteur) :: Para_SD
+        real (kind=wp), dimension(3) :: mes_Att_SM
+        real (kind=wp), dimension(3) :: mes_Att_SD
+        real (kind=wp), dimension(3,2) :: mes_Pos_SM
+
+! Local variables
+        real (kind=wp), dimension(3,3) :: pos_cibles_PM  !position des cibles optique sur le sat miroir
+        real (kind=wp), dimension(3) :: pos_sens_PD      !position du senseur optique sur le sat detecteur
+        real (kind=wp), dimension(2) :: ecart_TRG_2_3    !ecart entre les cibles 2 et 3 sur le MSC
+        real (kind=wp), dimension(3) :: err_Pos_SD
+        real (kind=wp), dimension(3) :: err_Pos_M
+
+
+! Interpretation des donnees senseurs
+    ! d'attitude
+        ! du satellite miroir
+        Para_SM%err_Att=mes_Att_SM
+
+        ! du satellite detecteur
+        Para_SD%err_Att=mes_Att_SD
+
+    ! de position
+        ! du satellite detecteur
+        !les donnees fournies sont des position angulaires, pour trouver le deltaX, deltaY il est necessaire d'utiliser plusieurs
+        !cibles sur le MSC pour trianguler et determiner la distance des cibles puis leur derive laterale
+            !il faut au prelable evaluer en theorie de combien sont espacees en apparence les cibles 2 et 3 sur le MSC 
+            !en vue de son attitude, en connaissant leur position sur le MSC et l'attitude (bruitee) mesuree par les STR
+                !position des cibles dans RefSM
+                pos_cibles_PM=Para_SM%pos_cibles
+
+                !position de la cible 2 dans RefPM
+                call rotationZ(pos_cibles_PM(2,:),Para_SM%err_Att(3))
+                call rotationY(pos_cibles_PM(2,:),Para_SM%err_Att(2))
+                call rotationX(pos_cibles_PM(2,:),Para_SM%err_Att(1))
+
+                !position de la cible 3 dans RefPM
+                call rotationZ(pos_cibles_PM(3,:),Para_SM%err_Att(3))
+                call rotationY(pos_cibles_PM(3,:),Para_SM%err_Att(2))
+                call rotationX(pos_cibles_PM(3,:),Para_SM%err_Att(1))
+
+                !ecart entre les 2 cibles (X et Y)
+                ecart_TRG_2_3(1)=abs(pos_cibles_PM(2,1)-pos_cibles_PM(3,1))
+                ecart_TRG_2_3(2)=abs(pos_cibles_PM(2,2)-pos_cibles_PM(3,2))
+                !print*,"ecart calcule entre les cibles",ecart_TRG_2_3
+
+            !estimation de la distance (Z) par triangulation en utilisant les mesures sur les cibles 2 et 3
+                err_Pos_SD(3)=ecart_TRG_2_3(1) / TAND( abs(mes_Pos_SM(2,2)-mes_Pos_SM(3,2)) )
+                !err_Pos_SD(3)=ecart_TRG_2_3(2) / TAND( abs(mes_Pos_SM(2,1)-mes_Pos_SM(3,1)) ) !donnerait le meme resultat en 
+                !theorie mais les cibles 2 et 3 ont la meme coordonnee Y
+
+            !Maintenant que l'on connait la distance on peut reconstruire la position vectorielle de la cible 1,
+            !les composantes X et Y de ce vecteur sont les deltaX et deltaY recherchees
+                err_Pos_SD(1)=TAND(mes_Pos_SM(1,2)) * err_Pos_SD(3)
+                err_Pos_SD(2)=TAND(mes_Pos_SM(1,1)) * err_Pos_SD(3)
+                !print*,"vecteur position calcule dans le repere du CLM",err_Pos_SD
+!!$write(24,*) err_Pos_SD
+
+                ! err_Pos_SD contient la position vectorielle de la cible 1 vues par le CLM dans son propre repere,
+                ! il faut alors remettre ces donnees dans le plan de reference du pointage
+                call rotationX(err_Pos_SD,Para_SD%err_Att(1))
+                call rotationY(err_Pos_SD,Para_SD%err_Att(2))
+                call rotationZ(err_Pos_SD,Para_SD%err_Att(3))
+
+                !auxquelles il faut retrancher la distance qui separe les deux satellites et celle de la cible 1 du CLM
+
+                    !il faut au prealable estimer les position de la cible 1 et du CLM avec les donnees bruitees des STR
+                        ! geometrie du satellite miroir
+                            !position de la cible dans RefSM
+                            pos_cibles_PM=Para_SM%pos_cibles
+
+                            !position de la cible 1 dans RefPM
+                            call rotationZ(pos_cibles_PM(1,:),Para_SM%err_Att(3))
+                            call rotationY(pos_cibles_PM(1,:),Para_SM%err_Att(2))
+                            call rotationX(pos_cibles_PM(1,:),Para_SM%err_Att(1))
+
+                        ! geometrie du satellite detecteur
+                            !position du senseur optique dans RefSD
+                            pos_sens_PD=Para_SD%pos_sens
+
+                            !position des senseurs dans RefPD pour pouvoir interpreter correctement les donnees senseurs
+                            call rotationZ(pos_sens_PD,Para_SD%err_Att(3))
+                            call rotationY(pos_sens_PD,Para_SD%err_Att(2))
+                            call rotationX(pos_sens_PD,Para_SD%err_Att(1))
+
+                err_Pos_SD=err_Pos_SD - (pos_cibles_PM(1,:)-pos_sens_PD)
+
+                !l'erreur de positionnement du satellite detecteur est l'oppose de la position mesuree du satellite miroir par le senseur
+                err_Pos_SD=-err_Pos_SD
+
+                !Pour connaitre la derive du DSC il faut retirer sa position nominale
+                err_Pos_SD=err_Pos_SD - Para_SD%pointage%position
+
+                !print*,"erreur relative calculee de position du DSC/MSC:"
+                !print*,err_Pos_SD*100
+!!$write(25,*) err_Pos_SD
+
+                !err_Pos_SD contient maintenant la derive du centre de masse du SD/SM calcule a partir des donnees fournies par les senseurs
+                !ce qui nous interesse pour la reconstruction des images c'est la derive du LED et du HED par rapport aux miroirs
+                        !derive des miroirs due au bras de levier
+                        err_Pos_M=Para_SM%pos_miroirs
+                        call rotationZ(err_Pos_M,Para_SM%err_Att(3))
+                        call rotationY(err_Pos_M,Para_SM%err_Att(2))
+                        call rotationX(err_Pos_M,Para_SM%err_Att(1))
+                        err_Pos_M=err_Pos_M-Para_SM%pos_miroirs
+                        !print*,err_Pos_M*100
+                        !derive du LED due au bras de levier
+                        Para_SD%err_Pos_LED=Para_SD%pos_LED
+                        call rotationZ(Para_SD%err_Pos_LED,Para_SD%err_Att(3))
+                        call rotationY(Para_SD%err_Pos_LED,Para_SD%err_Att(2))
+                        call rotationX(Para_SD%err_Pos_LED,Para_SD%err_Att(1))
+                        Para_SD%err_Pos_LED=Para_SD%err_Pos_LED-Para_SD%pos_LED
+                        !print*,Para_SD%err_Pos_LED*100
+                        !derive du HED due au bras de levier
+                        Para_SD%err_Pos_HED=Para_SD%pos_HED
+                        call rotationZ(Para_SD%err_Pos_HED,Para_SD%err_Att(3))
+                        call rotationY(Para_SD%err_Pos_HED,Para_SD%err_Att(2))
+                        call rotationX(Para_SD%err_Pos_HED,Para_SD%err_Att(1))
+                        Para_SD%err_Pos_HED=Para_SD%err_Pos_HED-Para_SD%pos_HED
+                        !print*,Para_SD%err_Pos_HED*100
+                        !derive totale du LED (bras de levier LED-bras de levier des miroirs+derive SD)
+                        Para_SD%err_Pos_LED=Para_SD%err_Pos_LED-err_Pos_M+err_Pos_SD
+                        !print*,Para_SD%err_Pos_LED*100
+                        !derive totale du HED (bras de levier HED-bras de levier des miroirs+derive SD)
+                        Para_SD%err_Pos_HED=Para_SD%err_Pos_HED-err_Pos_M+err_Pos_SD
+                        !print*,Para_SD%err_Pos_HED*100
+
+end subroutine traitement_donnees
+
+
+!------------------------------------------------------------------------
+!-                      Programme principal                             -
+!------------------------------------------------------------------------
+subroutine donnees_senseurs_interpretees(Para_SM,Para_SD,etat)
+
+implicit none
+
+! IN/OUT variables
+        type (ParametresSatMiroir) :: Para_SM
+        type (ParametresSatDetecteur) :: Para_SD
+        integer :: etat
+
+! Local variables
+        real (kind=wp), dimension(3,3) :: pos_cibles_PM  !position des cibles optique sur le sat miroir
+        real (kind=wp), dimension(3) :: pos_sens_PD      !position du senseur optique sur le sat detecteur
+        real (kind=wp), dimension(3) :: mes_Att_SM
+        real (kind=wp), dimension(3) :: mes_Att_SD
+        real (kind=wp), dimension(3,2) :: mes_Pos_SM
+
+
+! Calcul la position des senseurs dans le repere de reference (de pointage)
+        call pos_senseurs(Para_SM,Para_SD,etat, pos_cibles_PM,pos_sens_PD)
+
+! Genere les donnees senseurs (bruitees) a partir des donnees reelles de position et d'attitude
+        call donnees_senseurs(Para_SM,Para_SD,etat,pos_cibles_PM,pos_sens_PD, mes_Att_SM,mes_Att_SD,mes_Pos_SM)
+
+! Interpretation des donnees senseurs pour calculer la derive de position du DSC
+        call traitement_donnees(Para_SM,Para_SD,mes_Att_SM,mes_Att_SD,mes_Pos_SM)
+
+
+end subroutine donnees_senseurs_interpretees
+
+end module SENSEURS
